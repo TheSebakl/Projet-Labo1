@@ -31,7 +31,7 @@ public class GameController {
         reload();
     }
 
-    public void reload(){7
+    public void reload(){
         this.game = game_base.copy();
         this.character = new GameCharacter(new Coordonnees(game.getDepart().getCoord()));
     }
