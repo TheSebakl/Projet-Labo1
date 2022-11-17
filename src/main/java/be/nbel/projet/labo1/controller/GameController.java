@@ -7,7 +7,18 @@ import be.nbel.projet.labo1.vue.GameView;
 public class GameController {
     private PlateauFactory factory = new PlateauFactory(-1, -1);
     private Plateau game;
+    private Plateau game_base;
     private GameCharacter character;
+    private boolean tickToPlay = true;
+    private Movements lastMovement = null;
+    boolean modeAutomatique = false;
+    private double score; // Objectif, avoir le score le plus bas possible. Si mort, devient MAX - Score (plus il a été loin, plus il est avantagé).
+
+    protected GameController(Plateau game_base){
+        this.game_base = game_base;
+        modeAutomatique = true;
+        reload();
+    }
 
     public  GameController(){
         renew();
@@ -16,7 +27,12 @@ public class GameController {
 
     public void renew(){
 
-        this.game = factory.generate();
+        this.game_base = factory.generate();
+        reload();
+    }
+
+    public void reload(){7
+        this.game = game_base.copy();
         this.character = new GameCharacter(new Coordonnees(game.getDepart().getCoord()));
     }
 
@@ -33,12 +49,26 @@ public class GameController {
     }
 
     public void moveCharacter(Movements movement){
-        character.move(game, movement);
+        if(canPlay()) {
+            character.move(game, movement);
+            this.lastMovement = movement;
+            tickToPlay = false;
+        }
     }
 
     public void applyGravity() {
-        if(!isGameFinished())
-            character.move(this.game, Movements.BOTTOM);
+        if(!isGameFinished() && !isTickToPlay()){
+            System.out.println("GRAVITY : isInAir? " + character.isInAir() + " - X? " + lastMovement.X);
+            if(character.isInAir()) {
+                if (lastMovement.X == 1 && !character.move(this.game, Movements.RIGHT_BOTTOM))
+                    character.move(this.game, Movements.BOTTOM);
+                else if (lastMovement.X == -1 && !character.move(this.game, Movements.LEFT_BOTTOM))
+                    character.move(this.game, Movements.BOTTOM);
+                else if (lastMovement.X == 0)
+                    character.move(this.game, Movements.BOTTOM);
+            }
+            tickToPlay = true;
+        }
     }
 
     public boolean isGameFinished() {
@@ -47,5 +77,13 @@ public class GameController {
 
     public boolean isDead() {
         return character.isDead();
+    }
+
+    public boolean isTickToPlay(){
+        return tickToPlay;
+    }
+
+    public boolean canPlay(){
+        return isTickToPlay() && !isGameFinished();
     }
 }

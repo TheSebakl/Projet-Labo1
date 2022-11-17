@@ -49,6 +49,9 @@ public class GameView extends BasicGame {
             case 49: // LETTER N
                 gc.renew();
                 break;
+            case 19: // LETTER R
+                gc.reload();
+                break;
             case 71: // 7 - TOP LEFT
                 gc.moveCharacter(Movements.LEFT_TOP);
                 break;

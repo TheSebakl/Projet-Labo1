@@ -12,6 +12,11 @@ public class Plateau {
     private ITiles[][] plateau;
 
 
+    protected Plateau(Plateau plateau){
+        this.plateau = plateau.plateau;
+        this.depart = plateau.depart;
+        this.arrivee = plateau.arrivee;
+    }
     protected Plateau(ITiles[][][] tiles){
         this.plateau = tiles[0];
         this.depart = tiles[1][0][0];
@@ -42,6 +47,10 @@ public class Plateau {
             return true;
         }
         return false;
+    }
+
+    public Plateau copy(){
+        return new Plateau(this);
     }
 }
 

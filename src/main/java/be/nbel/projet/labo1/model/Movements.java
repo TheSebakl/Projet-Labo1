@@ -11,7 +11,7 @@ public enum Movements {
     LEFT_BOTTOM(-1,-1)
     ;
 
-    int X, Y;
+    public int X, Y;
 
     Movements(int x, int y){
         this.X = x;
