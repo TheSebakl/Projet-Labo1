@@ -31,6 +31,11 @@ public class Arrivee implements ITiles {
     }
 
     @Override
+    public boolean renderBorder() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "Arrivee " + getCoord().toString();
     }

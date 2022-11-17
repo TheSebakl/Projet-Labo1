@@ -1,7 +1,10 @@
 package be.nbel.projet.labo1.vue;
 
 import be.nbel.projet.labo1.controller.GameController;
+import be.nbel.projet.labo1.model.Coordonnees;
+import be.nbel.projet.labo1.model.Movements;
 import be.nbel.projet.labo1.model.tiles.ITiles;
+import org.lwjgl.Sys;
 import org.newdawn.slick.*;
 
 public class GameView extends BasicGame {
@@ -35,6 +38,8 @@ public class GameView extends BasicGame {
         renderBanneer(g);
         renderFond(g);
         renderTiles(g);
+        renderMainCharacter(g);
+        renderEnd(g);
     }
 
     public void keyReleased(int key, char code){
@@ -43,9 +48,31 @@ public class GameView extends BasicGame {
         switch (key){
             case 49: // LETTER N
                 gc.renew();
-                System.out.println("RENEW");
                 break;
-
+            case 71: // 7 - TOP LEFT
+                gc.moveCharacter(Movements.LEFT_TOP);
+                break;
+            case 72: // 8 - TOP
+                gc.moveCharacter(Movements.TOP);
+                break;
+            case 73: // 9 - TOP RIGHT
+                gc.moveCharacter(Movements.RIGHT_TOP);
+                break;
+            case 75: // 4 - Bottom
+                gc.moveCharacter(Movements.LEFT);
+                break;
+            case 77: // 6 - Right
+                gc.moveCharacter(Movements.RIGHT);
+                break;
+            case 79: // 7 - bottom left
+                gc.moveCharacter(Movements.LEFT_BOTTOM);
+                break;
+            case 80: // 8 - Bottom
+                gc.moveCharacter(Movements.BOTTOM);
+                break;
+            case 81: // 9 - Right Bottom
+                gc.moveCharacter(Movements.RIGHT_BOTTOM);
+                break;
         }
     }
 
@@ -59,36 +86,52 @@ public class GameView extends BasicGame {
                 if(tile != null) {
                     g.setColor(tile.getColor());
                     g.fillRect((j * wt), BANNER_HEIGHT + (i * ht), wt, ht);
+                    if(tile.renderBorder()) {
+                        g.setColor(new Color(0, 0, 0));
+                        g.drawRect((j * wt), BANNER_HEIGHT + (i * ht), wt, ht);
+                    }
                 }
-                g.setColor(new Color(0, 0, 0));
-                g.drawRect((j*wt), BANNER_HEIGHT + (i*ht), wt, ht);
 
             }
         }
 
 
     }
+
+    private void renderMainCharacter(Graphics g) {
+        if(!gc.isDead()) {
+            Coordonnees playerCoordonnees = gc.getMainCharacterCoordonnees();
+            ITiles[][] tiles = gc.getTiles();
+            int wt = SCREEN_WIDTH / tiles[0].length;
+            int ht = (GAME_HEIGHT) / tiles.length;
+
+
+            g.setColor(Color.cyan);
+            g.fillRect((playerCoordonnees.X * wt), BANNER_HEIGHT + (playerCoordonnees.Y * ht), wt, ht);
+        }
+    }
+
     private void renderBanneer(Graphics g){
         g.setColor(new Color(212, 212, 212));
         g.fillRect(0, 0, SCREEN_WIDTH, BANNER_HEIGHT);
-        renderButtons(g);
     }
 
     private void renderFond(Graphics g){
-        g.setColor(new Color(100, 243, 250));
+        g.setColor(new Color(200, 243, 255));
         g.fillRect(0, BANNER_HEIGHT, SCREEN_WIDTH, GAME_HEIGHT);
     }
 
-    private void renderButtons(Graphics g){
-        //renderButton(g, "Nouveau", 10, 50, 80, 25);
+    private void renderEnd(Graphics g){
+        if(gc.isGameFinished()){
+            String message = "Game Over";
+            if(!gc.isDead()) message = "Félicitation";
+            g.setColor(Color.black);
+
+            g.drawString(message, (int)((float)SCREEN_WIDTH/2 - g.getFont().getWidth(message)/2), 80);
+
+
+        }
     }
 
-    private void renderButton(Graphics g, String message, int x, int y, int width, int height){
-        g.setColor(new Color(200, 200, 200));
-        g.fillRect(x, y, width, height);
-        g.setColor(new Color(0, 3, 0));
-        g.drawRect(x, y, width, height);
-        g.drawString(message, x+5, y+5);
-    }
 
 }

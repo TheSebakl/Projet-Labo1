@@ -31,6 +31,11 @@ public class Obstacle implements ITiles {
     }
 
     @Override
+    public boolean renderBorder() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "Obstacle " + getCoord().toString();
     }

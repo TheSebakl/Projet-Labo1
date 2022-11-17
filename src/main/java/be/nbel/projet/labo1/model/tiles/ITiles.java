@@ -11,4 +11,8 @@ public interface ITiles {
 
     public Color getColor();
 
+    public boolean renderBorder();
+
+
+
 }

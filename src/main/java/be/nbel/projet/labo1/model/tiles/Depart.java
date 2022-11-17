@@ -31,7 +31,13 @@ public class Depart implements ITiles {
     }
 
     @Override
+    public boolean renderBorder() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "Depart " + getCoord().toString();
     }
+
 }

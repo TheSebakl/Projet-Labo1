@@ -8,6 +8,11 @@ public class Coordonnees {
         this.Y = y;
     }
 
+    public Coordonnees(Coordonnees coordonnees){
+        this.X = coordonnees.X;
+        this.Y = coordonnees.Y;
+    }
+
     @Override
     public String toString() {
         return "(" + X + ";" + Y + ")";

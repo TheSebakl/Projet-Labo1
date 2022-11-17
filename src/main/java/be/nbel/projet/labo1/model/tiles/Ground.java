@@ -26,6 +26,11 @@ public class Ground implements ITiles {
     }
 
     @Override
+    public boolean renderBorder() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Ground " + getCoord().toString();
     }
