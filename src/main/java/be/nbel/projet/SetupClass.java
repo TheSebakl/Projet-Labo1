@@ -1,6 +1,7 @@
 package be.nbel.projet;
 
 import be.nbel.projet.labo1.controller.GameController;
+import be.nbel.projet.labo1.controller.GamesController;
 import be.nbel.projet.labo1.vue.GameView;
 import org.lwjgl.Sys;
 import org.newdawn.slick.*;
@@ -15,12 +16,12 @@ public class SetupClass {
 
 
     public static void main(String[] args) throws SlickException {
-        GameController gc  = setupController(args);
+        GamesController gc  = setupController(args);
         launchGame(gc);
     }
 
-    private static GameController setupController(String[] args){
-        GameController gc  = new GameController();
+    private static GamesController setupController(String[] args){
+
         int w = -1, h = -1;
         if(args.length >= 2){
             try {
@@ -30,13 +31,10 @@ public class SetupClass {
                 System.err.println("Impossible de convertir la taille en Integer");
             }
         }
-
-        gc.setWidthAndHeight(w, h);
-        gc.renew();
-        return gc;
+        return new GamesController(true, 10, w, h, 500);
     }
 
-    private static void launchGame(GameController gc) throws SlickException {
+    private static void launchGame(GamesController gc) throws SlickException {
         System.setProperty("org.lwjgl.librarypath", new File("natives").getAbsolutePath());
         System.setProperty("net.java.games.input.librarypath", new File("natives").getAbsolutePath());
 

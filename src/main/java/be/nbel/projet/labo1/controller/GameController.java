@@ -26,9 +26,6 @@ public class GameController {
         return game.getTiles();
     }
 
-    public Coordonnees getMainCharacterCoordonnees(){
-        return character.getCoordonnees();
-    }
 
     public void moveCharacter(Movements movement){
         if(canPlay()) {
@@ -67,5 +64,9 @@ public class GameController {
 
     public boolean canPlay(){
         return isTickToPlay() && !isGameFinished();
+    }
+
+    public GameCharacter getMainCharacter() {
+        return character;
     }
 }

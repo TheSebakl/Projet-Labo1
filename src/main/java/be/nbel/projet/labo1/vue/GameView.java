@@ -1,7 +1,8 @@
 package be.nbel.projet.labo1.vue;
 
-import be.nbel.projet.labo1.controller.GameController;
+import be.nbel.projet.labo1.controller.GamesController;
 import be.nbel.projet.labo1.model.Coordonnees;
+import be.nbel.projet.labo1.model.GameCharacter;
 import be.nbel.projet.labo1.model.Movements;
 import be.nbel.projet.labo1.model.tiles.ITiles;
 import org.lwjgl.Sys;
@@ -14,9 +15,9 @@ public class GameView extends BasicGame {
     private static int BANNER_HEIGHT = 100;
     private static int GAME_HEIGHT = SCREEN_HEIGHT - BANNER_HEIGHT;
 
-    private GameController gc;
+    private GamesController gc;
 
-    public GameView(String title, GameController gc) {
+    public GameView(String title, GamesController gc) {
         super(title);
         this.gc = gc;
     }
@@ -50,37 +51,37 @@ public class GameView extends BasicGame {
                 gc.renew();
                 break;
             case 19: // LETTER R
-                gc.reload();
+                gc.reload(); //TODO pas le même type de reload si manuel
                 break;
             case 71: // 7 - TOP LEFT
-                gc.moveCharacter(Movements.LEFT_TOP);
+                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.LEFT_TOP);
                 break;
             case 72: // 8 - TOP
-                gc.moveCharacter(Movements.TOP);
+                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.TOP);
                 break;
             case 73: // 9 - TOP RIGHT
-                gc.moveCharacter(Movements.RIGHT_TOP);
+                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.RIGHT_TOP);
                 break;
             case 75: // 4 - Bottom
-                gc.moveCharacter(Movements.LEFT);
+                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.LEFT);
                 break;
             case 77: // 6 - Right
-                gc.moveCharacter(Movements.RIGHT);
+                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.RIGHT);
                 break;
             case 79: // 7 - bottom left
-                gc.moveCharacter(Movements.LEFT_BOTTOM);
+                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.LEFT_BOTTOM);
                 break;
             case 80: // 8 - Bottom
-                gc.moveCharacter(Movements.BOTTOM);
+                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.BOTTOM);
                 break;
             case 81: // 9 - Right Bottom
-                gc.moveCharacter(Movements.RIGHT_BOTTOM);
+                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.RIGHT_BOTTOM);
                 break;
         }
     }
 
     private void renderTiles(Graphics g){
-        ITiles[][] tiles = gc.getTiles();
+        ITiles[][] tiles = gc.getActiveGame().getTiles();
         int wt = SCREEN_WIDTH/tiles[0].length;
         int ht = (GAME_HEIGHT)/tiles.length;
         for(int i = 0; i < tiles.length; i++){
@@ -102,9 +103,10 @@ public class GameView extends BasicGame {
     }
 
     private void renderMainCharacter(Graphics g) {
-        if(!gc.isDead()) {
-            Coordonnees playerCoordonnees = gc.getMainCharacterCoordonnees();
-            ITiles[][] tiles = gc.getTiles();
+        GameCharacter gameCharacterActive = gc.getActiveGame().getMainCharacter();
+        if(!gameCharacterActive.isDead()) {
+            Coordonnees playerCoordonnees =  gameCharacterActive.getCoordonnees();
+            ITiles[][] tiles = gc.getActiveGame().getTiles();
             int wt = SCREEN_WIDTH / tiles[0].length;
             int ht = (GAME_HEIGHT) / tiles.length;
 
@@ -125,9 +127,9 @@ public class GameView extends BasicGame {
     }
 
     private void renderEnd(Graphics g){
-        if(gc.isGameFinished()){
+        if(gc.getActiveGame().isGameFinished()){
             String message = "Game Over";
-            if(!gc.isDead()) message = "Félicitation";
+            if(!gc.getActiveGame().getMainCharacter().isDead()) message = "Félicitation";
             g.setColor(Color.black);
 
             g.drawString(message, (int)((float)SCREEN_WIDTH/2 - g.getFont().getWidth(message)/2), 80);
