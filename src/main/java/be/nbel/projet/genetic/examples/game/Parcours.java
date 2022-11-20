@@ -50,7 +50,7 @@ public class Parcours implements IGeneticElement {
     public IGeneticElement crossOver(IGeneticElement otherParent) {
 
         Random r = new Random();
-        double scoreRatio = getScore()/(getScore()+otherParent.getScore())*100;
+        double scoreRatio = 100-(getScore()/(getScore()+otherParent.getScore())*100);
         LinkedList<Movements> newActions = new LinkedList<>();
         if(otherParent instanceof Parcours) {
             int min = min(actions.size(),((Parcours) otherParent).actions.size());
@@ -73,7 +73,7 @@ public class Parcours implements IGeneticElement {
     public boolean mutate(double mutationFactor) {
         Random r = new Random();
         if(r.nextInt(100) <= mutationFactor*100){
-            int index = r.nextInt(4);
+            int index = r.nextInt(3);
             if(actions.size()<3 && index==0) index++;
             switch (index){
                 case 0: // Remove 1 element

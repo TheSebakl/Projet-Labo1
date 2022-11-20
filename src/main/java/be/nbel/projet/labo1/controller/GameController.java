@@ -72,7 +72,7 @@ public class GameController {
     public synchronized double getScore() {
         // if (!isGameFinished()) return Double.NaN;
         Coordonnees arrivee = this.game.getArrivee().getCoord();
-        double score = Math.pow(arrivee.X - character.getCoordonnees().X,2)+Math.pow(arrivee.Y - character.getCoordonnees().Y,2);
+        double score = (Math.pow((arrivee.X - character.getCoordonnees().X)+2,2)+Math.pow((arrivee.Y - character.getCoordonnees().Y)+2,2))-4;
         //if(isDead()) score += 100;
         return score;
 
