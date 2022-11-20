@@ -2,6 +2,7 @@ package be.nbel.projet.genetic;
 
 import be.nbel.projet.genetic.breeding.BreedingParentsType;
 import be.nbel.projet.genetic.breeding.IBreeding;
+import org.lwjgl.Sys;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -11,17 +12,18 @@ public class GeneticAlgorithm {
     private SortedSet<IGeneticElement> elements = new TreeSet<>();
     private List<IGeneticElement> parents = new ArrayList<>();
 
-    private int maxPopulation;
-    private double crossOverRate; // rate des "nouveaux enfants" --> 100-crossOverRate donne le pourcentage des parents présent dans la génération enfant.
-    private double mutationFactor;
-    private int numberOfCutPoints; // ??? TODO
-    private double keepRandomParentsRatio;
-    private IBreeding breedingParents;
-    private int maxNbrIteration;
-    private double objectiveScore;
-    private Scoring scoringObjective;
-
+    protected int maxPopulation;
+    protected double crossOverRate; // rate des "nouveaux enfants" --> 100-crossOverRate donne le pourcentage des parents présent dans la génération enfant.
+    protected double mutationFactor;
+    protected int numberOfCutPoints; // ??? TODO
+    protected double keepRandomParentsRatio;
+    protected IBreeding breedingParents;
+    protected int maxNbrIteration;
+    protected double objectiveScore;
+    protected Scoring scoringObjective;
     private int nbrIteration = 0;
+
+    private IGeneticElement bestLast;
 
     // Population Size
     // Crossover rate
@@ -29,24 +31,44 @@ public class GeneticAlgorithm {
     // Number of cut points
     // Which parents to keep? (fitness vs randomlu)
     // Which parents to choose for breeding?
-    // Who is mutated? How?
+    // Who is mutated? How ?
     // Speciation ?
 
 
     private Class<? extends IGeneticElement> iGeneticElementClass;
     private Random r = new Random();
 
-    private GeneticAlgorithm(Class<? extends IGeneticElement> iGeneticElementClass){
+    protected GeneticAlgorithm(Class<? extends IGeneticElement> iGeneticElementClass){
         this.iGeneticElementClass = iGeneticElementClass;
     }
 
     public int nextIteration(){
+        if(!hasEverythingAScore()) return nbrIteration;
+        reorganizeEverything();
+        if(elements.size()>0) bestLast = elements.first();
         if(this.scoringObjective.hasAttainedScore(elements.first().getScore(), objectiveScore) || nbrIteration>=maxNbrIteration) return -1;
         keepGoodParents();
         elements.clear();
         generatePopulation(false);
         return ++nbrIteration;
+    }
+    public IGeneticElement getBestLastElement(){
+        return bestLast;
+    }
+    private void reorganizeEverything() {
+        SortedSet<IGeneticElement> newOrder = new TreeSet<>();
+        for(IGeneticElement element : elements){
+            newOrder.add(element);
+        }
+        this.elements = newOrder;
+    }
 
+    private boolean hasEverythingAScore(){
+        for(IGeneticElement element : elements){
+            if(Double.isNaN(element.getScore())) return false;
+        }
+        System.out.println("EVERYTHING IS GOOD");
+        return true;
     }
 
     private void keepGoodParents(){
@@ -54,6 +76,7 @@ public class GeneticAlgorithm {
         int nbrParentAGarder = (int) (maxPopulation * (childRate/100));
         parents = breedingParents.getParents(elements, nbrParentAGarder, keepRandomParentsRatio);
     }
+
 
     public Set<IGeneticElement> getElements(){
         return elements;
@@ -89,12 +112,16 @@ public class GeneticAlgorithm {
         return par;
     }
 
-    private void generatePopulation(boolean init){
+    protected void generatePopulation(boolean init){
             try {
                 while(generateChromosome(init));
             } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
                 e.printStackTrace();
             }
+            afterGeneratePopulation();
+    }
+
+    protected void afterGeneratePopulation(){
 
     }
 

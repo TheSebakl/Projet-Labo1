@@ -3,6 +3,7 @@ package be.nbel.projet.labo1.vue;
 import be.nbel.projet.labo1.controller.GamesController;
 import be.nbel.projet.labo1.model.Coordonnees;
 import be.nbel.projet.labo1.model.GameCharacter;
+import be.nbel.projet.labo1.model.MovementMapper;
 import be.nbel.projet.labo1.model.Movements;
 import be.nbel.projet.labo1.model.tiles.ITiles;
 import org.lwjgl.Sys;
@@ -14,6 +15,7 @@ public class GameView extends BasicGame {
     public static int SCREEN_HEIGHT = 900;
     private static int BANNER_HEIGHT = 100;
     private static int GAME_HEIGHT = SCREEN_HEIGHT - BANNER_HEIGHT;
+    private MovementMapper movementMapper = new MovementMapper().setMode(MovementMapper.MODE_KEYBOARD);
 
     private GamesController gc;
 
@@ -54,28 +56,15 @@ public class GameView extends BasicGame {
                 gc.reload(); //TODO pas le même type de reload si manuel
                 break;
             case 71: // 7 - TOP LEFT
-                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.LEFT_TOP);
-                break;
             case 72: // 8 - TOP
-                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.TOP);
-                break;
             case 73: // 9 - TOP RIGHT
-                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.RIGHT_TOP);
-                break;
             case 75: // 4 - Bottom
-                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.LEFT);
-                break;
+            case 76: // 5 - Stand
             case 77: // 6 - Right
-                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.RIGHT);
-                break;
             case 79: // 7 - bottom left
-                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.LEFT_BOTTOM);
-                break;
             case 80: // 8 - Bottom
-                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.BOTTOM);
-                break;
             case 81: // 9 - Right Bottom
-                if(gc.isManuel()) gc.getActiveGame().moveCharacter(Movements.RIGHT_BOTTOM);
+                if(gc.isManuel()) gc.getActiveGame().moveCharacter(movementMapper.parse(key));
                 break;
         }
     }
@@ -119,6 +108,17 @@ public class GameView extends BasicGame {
     private void renderBanneer(Graphics g){
         g.setColor(new Color(212, 212, 212));
         g.fillRect(0, 0, SCREEN_WIDTH, BANNER_HEIGHT);
+
+        gc.getTotalGames();
+        g.setColor(Color.black);
+        String message = (gc.getActiveGameIndex()+1) + "/" + gc.getTotalGames();
+        g.drawString(message, (int)((float)SCREEN_WIDTH/2 - g.getFont().getWidth(message)/2), 5);
+        message = gc.getPath();
+        g.drawString(message, (int)((float)SCREEN_WIDTH/2 - g.getFont().getWidth(message)/2), 25);
+        message = "Score : " + gc.getLastScore();
+        g.drawString(message, (int)((float)(SCREEN_WIDTH/4) - g.getFont().getWidth(message)/2), 50);
+        message = "Best Score : " + gc.getBestScore();
+        g.drawString(message, (int)((float)(SCREEN_WIDTH/4*3) - g.getFont().getWidth(message)/2), 50);
     }
 
     private void renderFond(Graphics g){

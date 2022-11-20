@@ -24,7 +24,7 @@ public class PlateauFactory {
         ITiles arrivee = new Arrivee();
         generateGround(10);
         if(!generatePlusBasPossible(0, depart)) System.err.println("TILE NON GENERE???");
-        generateObstacle(3);
+        //generateObstacle(3);
         generatePlusBasPossible(width-1, arrivee);
         System.out.println("Plateau generated");
         return new Plateau(new ITiles[][][]{plateau, new ITiles[][]{new ITiles[]{depart, arrivee}}});

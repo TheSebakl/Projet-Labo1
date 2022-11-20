@@ -22,16 +22,24 @@ public class SetupClass {
 
     private static GamesController setupController(String[] args){
 
+        int nbrThread = 1, chars = 1, evaluationTicks = 20;
         int w = -1, h = -1;
-        if(args.length >= 2){
+        double crossOver = 0.2, mutation = 0.01;
+        if(args.length > 0){
             try {
-                w = Integer.parseInt(args[0]);
-                h = Integer.parseInt(args[1]);
+                nbrThread = Integer.parseInt(args[0]);
+                w = Integer.parseInt(args[1]);
+                h = Integer.parseInt(args[2]);
+                chars = Integer.parseInt(args[3]);
+                crossOver= Double.parseDouble(args[4]);
+                mutation= Double.parseDouble(args[5]);
+                evaluationTicks = Integer.parseInt(args[6]);
+
             }catch(Exception e){
                 System.err.println("Impossible de convertir la taille en Integer");
             }
         }
-        return new GamesController(true, 10, w, h, 500);
+        return new GamesController( nbrThread, w, h, chars, crossOver, mutation, evaluationTicks);
     }
 
     private static void launchGame(GamesController gc) throws SlickException {

@@ -10,13 +10,12 @@ public class GameController {
     private GameCharacter character;
     private boolean tickToPlay = true;
     private Movements lastMovement = null;
-    private double score; // Objectif, avoir le score le plus bas possible. Si mort, devient MAX - Score (plus il a été loin, plus il est avantagé).
 
     protected GameController(Plateau game_base){
         reload(game_base);
     }
 
-    protected void reload(Plateau game_base){
+    public void reload(Plateau game_base){
         this.game = game_base.copy();
         this.character = new GameCharacter(new Coordonnees(game.getDepart().getCoord()));
     }
@@ -37,7 +36,7 @@ public class GameController {
 
     public void applyGravity() {
         if(!isGameFinished() && !isTickToPlay()){
-            System.out.println("GRAVITY : isInAir? " + character.isInAir() + " - X? " + lastMovement.X);
+            // System.out.println("GRAVITY : isInAir? " + character.isInAir() + " - X? " + lastMovement.X);
             if(character.isInAir()) {
                 if (lastMovement.X == 1 && !character.move(this.game, Movements.RIGHT_BOTTOM))
                     character.move(this.game, Movements.BOTTOM);
@@ -69,4 +68,14 @@ public class GameController {
     public GameCharacter getMainCharacter() {
         return character;
     }
+
+    public synchronized double getScore() {
+        // if (!isGameFinished()) return Double.NaN;
+        Coordonnees arrivee = this.game.getArrivee().getCoord();
+        double score = Math.pow(arrivee.X - character.getCoordonnees().X,2)+Math.pow(arrivee.Y - character.getCoordonnees().Y,2);
+        //if(isDead()) score += 100;
+        return score;
+
+    }
+
 }

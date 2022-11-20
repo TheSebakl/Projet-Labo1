@@ -8,7 +8,8 @@ public enum Movements {
     RIGHT(1,0),
     RIGHT_BOTTOM(1,-1),
     BOTTOM(0,-1),
-    LEFT_BOTTOM(-1,-1)
+    LEFT_BOTTOM(-1,-1),
+    STAND(0,0)
     ;
 
     public int X, Y;
@@ -17,4 +18,5 @@ public enum Movements {
         this.X = x;
         this.Y = y*-1;
     }
+
 }

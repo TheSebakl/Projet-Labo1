@@ -18,11 +18,11 @@ public class GameCharacter {
     }
 
     public boolean move(Plateau plateau, Movements movement){
-        System.out.println("Move Player");
-        System.out.println("  - Old coord : " + coordonnees.toString());
+        //System.out.println("Move Player");
+        //System.out.println("  - Old coord : " + coordonnees.toString());
         if(!isFinished){
             boolean mov = movement(plateau, movement);
-            System.out.println("  - New coord : " + coordonnees.toString());
+        //    System.out.println("  - New coord : " + coordonnees.toString());
             return mov;
         }
         // TODO vérifier si trou
