@@ -19,6 +19,7 @@ public class GamesController {
     private final boolean isManuel;
     private int indexActive = 0;
     private GeneticAlgorithm geneticAlgorithm;
+    private ScoreRunner bestThread;
 
     // MAN ?
     public GamesController(int workerThreads, int width, int height, int characters, double crossOver, double mutatioNFactor, int delay){
@@ -51,7 +52,7 @@ public class GamesController {
 
             if(Threads == -1) Threads = threads.size();
             LinkedList<ScoreRunner> scoreRunners = new LinkedList<>();
-            for(int i = 0; i < Threads-1; i++){
+            for(int i = 0; i < Threads; i++){
                 GameController gc = new GameController(game_base);
                 ScoreRunner scoreRunner = new ScoreRunner(gc, game_base, delay);
 
@@ -61,15 +62,14 @@ public class GamesController {
             }
             this.geneticAlgorithm = new GeneticAlgorithmGame(scoreRunners,crossOverRate, characters, mutationFactor );
             new Thread(new GeneticAlgorithmRunnable(geneticAlgorithm)).start();
+
+            GameController gc = new GameController(game_base);
+            bestThread = new ScoreRunner(gc, game_base, delay*5, true);
+            new Thread(bestThread).start();
+
         }
     }
 
-    public double getBestScore(){
-        if(isManuel()) return getActiveGame().getScore();
-        if(geneticAlgorithm.getBestLastElement() != null)
-        return geneticAlgorithm.getBestLastElement().getScore();
-        return 0;
-    }
 
     public void setWidthAndHeight(int width, int height){
         this.factory = new PlateauFactory(width, height);
@@ -78,18 +78,28 @@ public class GamesController {
 
 
     public GameController getActiveGame() {
+        if(indexActive == -1) return bestThread.getGame();
         return threads.get(indexActive).getGame();
     }
 
     public String getPath(){
-        if(isManuel) return "";
-        Parcours p = ((ScoreRunner)threads.get(indexActive)).getParcours();
+        if(isManuel) return "";Parcours p;
+        if(indexActive>=0)p = ((ScoreRunner)threads.get(indexActive)).getParcours();
+        else p = bestThread.getParcours();
         if(p == null) return  "";
         return p.toString();
     }
 
     public void reload() {
         if(isManuel()) getActiveGame().reload(game_base);
+        else{
+
+            for(int i = 0; i < threads.size(); i++){
+                threads.get(i).reload(game_base);
+            }
+            bestThread.reload(game_base);
+            geneticAlgorithm.forceFinish();
+        }
         //else{
         //    generateCharacters(-1);
         //}
@@ -108,11 +118,38 @@ public class GamesController {
     public int getTotalGames() {
         return threads.size();
     }
+
     public int getActiveGameIndex() {
         return indexActive;
     }
 
     public double getLastScore() {
         return getActiveGame().getScore();
+    }
+
+    public double getBestScore() {
+        if(geneticAlgorithm != null){
+            if(geneticAlgorithm.getBestElement() != null) return geneticAlgorithm.getBestElement().getScore();
+        }
+        return 0;
+    }
+
+    public double getLastBestScore(){
+        if(isManuel()) return getActiveGame().getScore();
+        if(geneticAlgorithm.getBestLastElement() != null)
+            return geneticAlgorithm.getBestLastElement().getScore();
+        return 0;
+    }
+
+    public void showBest() {
+        if(geneticAlgorithm.getBestElement() != null) {
+            indexActive = -1;
+            bestThread.addParcours((Parcours) geneticAlgorithm.getBestElement());
+        }
+    }
+    public void changeIndex(int sens){
+        int newIndex = indexActive + sens;
+        if(newIndex<0 || newIndex>=threads.size()) return;
+        indexActive = newIndex;
     }
 }

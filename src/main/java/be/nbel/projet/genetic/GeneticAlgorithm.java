@@ -2,6 +2,7 @@ package be.nbel.projet.genetic;
 
 import be.nbel.projet.genetic.breeding.BreedingParentsType;
 import be.nbel.projet.genetic.breeding.IBreeding;
+import be.nbel.projet.labo1.controller.GameController;
 import org.lwjgl.Sys;
 
 import java.lang.reflect.InvocationTargetException;
@@ -24,6 +25,7 @@ public class GeneticAlgorithm {
     private int nbrIteration = 0;
 
     private IGeneticElement bestLast;
+    private IGeneticElement best;
 
     // Population Size
     // Crossover rate
@@ -45,15 +47,27 @@ public class GeneticAlgorithm {
     public int nextIteration(){
         if(!hasEverythingAScore()) return nbrIteration;
         reorganizeEverything();
-        if(elements.size()>0) bestLast = elements.first();
+        saveBest();
         if(this.scoringObjective.hasAttainedScore(elements.first().getScore(), objectiveScore) || nbrIteration>=maxNbrIteration) return -1;
         keepGoodParents();
         elements.clear();
         generatePopulation(false);
         return ++nbrIteration;
     }
+
+    private void saveBest() {
+        if(elements.size()>0) {
+            bestLast = elements.first();
+            if(best == null) best = bestLast;
+            if(scoringObjective.hasAttainedScore(bestLast.getScore(), best.getScore())) best = bestLast;
+        }
+    }
+
     public IGeneticElement getBestLastElement(){
         return bestLast;
+    }
+    public IGeneticElement getBestElement(){
+        return best;
     }
     private void reorganizeEverything() {
         SortedSet<IGeneticElement> newOrder = new TreeSet<>();
@@ -128,6 +142,13 @@ public class GeneticAlgorithm {
     public int getIteration() {
         return nbrIteration;
     }
+
+    public void forceFinish() {
+        bestLast = null;
+        best = null;
+        nbrIteration = 0;
+    }
+
 
     public static class Builder{
 

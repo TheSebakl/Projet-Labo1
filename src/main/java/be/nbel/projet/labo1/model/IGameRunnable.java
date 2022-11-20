@@ -6,4 +6,5 @@ public interface IGameRunnable {
 
     GameController getGame();
 
+    void reload(Plateau game_base);
 }

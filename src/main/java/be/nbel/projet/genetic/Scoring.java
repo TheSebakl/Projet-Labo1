@@ -12,6 +12,7 @@ public enum Scoring {
         return scoring.hasAttainedScore(score, objective);
     }
 
+
     private interface IScoring{
         boolean hasAttainedScore(double score, double objective);
     }

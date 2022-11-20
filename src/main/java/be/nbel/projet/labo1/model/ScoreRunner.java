@@ -14,14 +14,21 @@ public class ScoreRunner implements IGameRunnable, Runnable {
     private Plateau game_base;
     private int delay;
     private int nbrAction = 0;
+    private boolean waitBeforeFinish;
 
     public ScoreRunner(GameController gc, Plateau game_base, int delay){
+        this(gc, game_base, delay, false);
+
+    }
+    public ScoreRunner(GameController gc, Plateau game_base, int delay, boolean waitBeforeFinish){
         this.gameController = gc;
         this.delay = delay;
         this.game_base = game_base;
+        this.waitBeforeFinish = waitBeforeFinish;
     }
 
     public void addParcours(Parcours parcours){
+        parcours.reset();
         this.parcours.addLast(parcours);
     }
 
@@ -30,7 +37,7 @@ public class ScoreRunner implements IGameRunnable, Runnable {
     @Override
     public void run() {
         while(true){
-            if(parcours.size()>0) {
+            if(parcours.size()>0 && !gameController.isGameFinished()) {
                 if (gameController.isTickToPlay()) {
                     Movements m = parcours.getFirst().next();
                     if (m == null) finishGame();
@@ -52,6 +59,11 @@ public class ScoreRunner implements IGameRunnable, Runnable {
     }
 
     private void finishGame(){
+        try {
+            Thread.sleep((waitBeforeFinish?delay*5:delay));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         double score = gameController.getScore();
         getParcours().setScore(score);
         gameController.reload(game_base);
@@ -62,5 +74,11 @@ public class ScoreRunner implements IGameRunnable, Runnable {
     @Override
     public GameController getGame() {
         return gameController;
+    }
+
+    @Override
+    public void reload(Plateau game_base) {
+        parcours.clear();
+        gameController.reload(game_base);
     }
 }

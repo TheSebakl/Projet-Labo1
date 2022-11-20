@@ -30,4 +30,9 @@ public class GravityRunnable implements IGameRunnable, Runnable {
     public GameController getGame() {
         return gc;
     }
+
+    @Override
+    public void reload(Plateau game_base) {
+        gc.reload(game_base);
+    }
 }

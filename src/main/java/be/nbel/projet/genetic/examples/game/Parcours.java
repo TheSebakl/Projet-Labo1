@@ -112,4 +112,8 @@ public class Parcours implements IGeneticElement {
         builder.append(")");
         return builder.toString();
     }
+
+    public void reset() {
+        index = 0;
+    }
 }

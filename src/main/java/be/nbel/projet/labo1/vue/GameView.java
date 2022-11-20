@@ -49,11 +49,14 @@ public class GameView extends BasicGame {
         System.out.println("Key: " + key);
         System.out.println("code: " + code);
         switch (key){
+            case 48: // LETTER B - BEST
+                gc.showBest();
+                break;
             case 49: // LETTER N
                 gc.renew();
                 break;
             case 19: // LETTER R
-                gc.reload(); //TODO pas le même type de reload si manuel
+                if(gc.isManuel()) gc.reload();
                 break;
             case 71: // 7 - TOP LEFT
             case 72: // 8 - TOP
@@ -65,6 +68,12 @@ public class GameView extends BasicGame {
             case 80: // 8 - Bottom
             case 81: // 9 - Right Bottom
                 if(gc.isManuel()) gc.getActiveGame().moveCharacter(movementMapper.parse(key));
+                break;
+            case 203: // ARROW LEFT
+                if(!gc.isManuel()) gc.changeIndex(-1);
+                break;
+            case 205: // ARROW RIGHT
+                if(!gc.isManuel()) gc.changeIndex(1);
                 break;
         }
     }
@@ -111,12 +120,14 @@ public class GameView extends BasicGame {
 
         gc.getTotalGames();
         g.setColor(Color.black);
-        String message = (gc.getActiveGameIndex()+1) + "/" + gc.getTotalGames();
+        String message = (gc.getActiveGameIndex()!=-1?gc.getActiveGameIndex()+1:"B") + "/" + gc.getTotalGames();
         g.drawString(message, (int)((float)SCREEN_WIDTH/2 - g.getFont().getWidth(message)/2), 5);
         message = gc.getPath();
         g.drawString(message, (int)((float)SCREEN_WIDTH/2 - g.getFont().getWidth(message)/2), 25);
         message = "Score : " + gc.getLastScore();
         g.drawString(message, (int)((float)(SCREEN_WIDTH/4) - g.getFont().getWidth(message)/2), 50);
+        message = "Last B Score : " + gc.getLastBestScore();
+        g.drawString(message, (int)((float)(SCREEN_WIDTH/4*2) - g.getFont().getWidth(message)/2), 50);
         message = "Best Score : " + gc.getBestScore();
         g.drawString(message, (int)((float)(SCREEN_WIDTH/4*3) - g.getFont().getWidth(message)/2), 50);
     }
